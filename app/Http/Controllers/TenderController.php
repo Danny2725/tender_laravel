@@ -70,40 +70,42 @@ class TenderController extends Controller
     }
 
 
-
-    // Hiển thị form chỉnh sửa tender
     public function edit($id)
     {
-        $tender = $this->findTenderByIdAndOwner($id);
-
-        if (!$tender) {
-            return redirect()->route('tender.listContractor')->with('error', 'Tender not found.');
-        }
+        // Tìm tender theo ID và kiểm tra quyền truy cập
+        $tender = TenderModel::findOrFail($id);
 
         return view('tender.edit', compact('tender'));
     }
 
-    // Cập nhật thông tin tender
+    // Cập nhật tender
     public function update(Request $request, $id)
     {
-        $this->validateRequest($request);
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'visibility' => 'required|string|in:public,private',
+        ]);
 
-        $tender = $this->findTenderByIdAndOwner($id);
-
-        if (!$tender) {
-            return redirect()->route('tender.listContractor')->with('error', 'Tender not found.');
-        }
+        $tender = TenderModel::findOrFail($id);
 
         $tender->update([
             'title' => $request->title,
             'description' => $request->description,
             'visibility' => $request->visibility,
         ]);
+        return redirect()->route('tender.list_contractor')->with('success', 'Tender updated successfully');
+    }
 
-        $this->handleInvites($tender, $request->suppliers);
+    // Xóa tender
+    public function destroy($id)
+    {
 
-        Session::flash('success', 'Tender updated successfully!');
-        return redirect()->route('tender.listContractor');
+        $tender = TenderModel::findOrFail($id);
+
+        $tender->delete();
+
+        return response()->json(['success' => 'Tender deleted successfully']);
     }
 
     // Danh sách các tender khả dụng cho supplier
@@ -147,8 +149,6 @@ class TenderController extends Controller
                 ->where('visibility', 'private')
                 ->get();
         }
-
-        // dd($publicTenders,$privateTenders);
         return view('tender.list_supplier', [
             'title' => 'Available Tenders (Supplier)',
             'publicTenders' => $publicTenders,
@@ -167,21 +167,6 @@ class TenderController extends Controller
         return view('tender.detail', compact('tender'));
     }
 
-    // Xóa một tender
-    public function destroy($id)
-    {
-        $tender = $this->findTenderByIdAndOwner($id);
-
-        if (!$tender) {
-            return redirect()->route('tender.listContractor')->with('error', 'Tender not found.');
-        }
-
-        $tender->delete();
-        Session::flash('success', 'Tender deleted successfully!');
-        return redirect()->route('tender.listContractor');
-    }
-
-    // Xử lý lời mời cho tender
     protected function handleInvites($tender, $suppliers)
     {
         if ($tender->visibility === 'private' && $suppliers) {

@@ -2,30 +2,36 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4">Edit Tender</h2>
-    <form action="{{ route('tender.update', $tender['id']) }}" method="post">
-        @csrf
-        @method('PUT')
-        
-        <div class="mb-3">
-            <label for="title" class="form-label">Title:</label>
-            <input type="text" class="form-control" id="title" name="title" required value="{{ $tender['title'] }}">
-        </div>
+    <h2 class="h4 mb-4">Edit Tender</h2>
+    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form action="{{ route('tender.update', $tender->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" name="title" id="title" class="form-control" value="{{ $tender->title }}" required>
+                </div>
 
-        <div class="mb-3">
-            <label for="description" class="form-label">Description:</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required>{{ $tender['description'] }}</textarea>
-        </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" id="description" class="form-control" required>{{ $tender->description }}</textarea>
+                </div>
 
-        <div class="mb-3">
-            <label for="visibility" class="form-label">Visibility:</label>
-            <select class="form-select" id="visibility" name="visibility">
-                <option value="public" {{ $tender['visibility'] == 'Public' ? 'selected' : '' }}>Public</option>
-                <option value="private" {{ $tender['visibility'] == 'Private' ? 'selected' : '' }}>Private</option>
-            </select>
-        </div>
+                <div class="mb-3">
+                    <label for="visibility" class="form-label">Visibility</label>
+                    <select name="visibility" id="visibility" class="form-control">
+                        <option value="public" {{ $tender->visibility == 'public' ? 'selected' : '' }}>Public</option>
+                        <option value="private" {{ $tender->visibility == 'private' ? 'selected' : '' }}>Private</option>
+                    </select>
+                </div>
 
-        <button type="submit" class="btn btn-primary">Update Tender</button>
-    </form>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ route('tender.list_contractor') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection

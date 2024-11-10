@@ -12,9 +12,16 @@ Route::get('/', [UserController::class, 'login'])->name('login')->withoutMiddlew
 Route::get('/tender/create', [TenderController::class, 'create'])->name('tender.create')->withoutMiddleware(['web', 'csrf']);
 Route::post('/tender/store', [TenderController::class, 'store'])->name('tender.store')->withoutMiddleware(['web', 'csrf']);
 Route::get('/tender/list_contractor', [TenderController::class, 'listContractor'])->name('tender.list_contractor')->withoutMiddleware(['web', 'csrf']);
+
 Route::get('/tender/list_supplier', [TenderController::class, 'listSupplier'])->name('tender.list_supplier')->withoutMiddleware(['web', 'csrf']);
 Route::get('/tender/detail/{id}', [TenderController::class, 'detail'])->name('tender.detail')->withoutMiddleware(['web', 'csrf']);
 Route::get('/tender/edit/{id}', [TenderController::class, 'edit'])->name('tender.edit')->withoutMiddleware(['web', 'csrf']);
+
+Route::put('/tender/update/{id}', [TenderController::class, 'update'])->name('tender.update');
+
+Route::get('/tender/edit/{id}', [TenderController::class, 'edit'])->name('tender.edit');
+Route::put('/tender/update/{id}', [TenderController::class, 'update'])->name('tender.update');
+Route::delete('/tender/delete/{id}', [TenderController::class, 'destroy'])->name('tender.destroy');
 
 
 // Authentication routes without CSRF
