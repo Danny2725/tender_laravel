@@ -16,13 +16,6 @@ Route::get('/tender/list_supplier', [TenderController::class, 'listSupplier'])->
 Route::get('/tender/detail/{id}', [TenderController::class, 'detail'])->name('tender.detail')->withoutMiddleware(['web', 'csrf']);
 Route::get('/tender/edit/{id}', [TenderController::class, 'edit'])->name('tender.edit')->withoutMiddleware(['web', 'csrf']);
 
-// Tender CRUD operations
-Route::post('/tender/update/{id}', [TenderController::class, 'update'])->name('tender.update')->withoutMiddleware(['web', 'csrf']);
-Route::delete('/tender/delete/{id}', [TenderController::class, 'destroy'])->name('tender.delete')->withoutMiddleware(['web', 'csrf']);
-
-// Additional Tender Actions
-Route::get('/tender/view/{title}', [TenderController::class, 'view'])->name('tender.view')->withoutMiddleware(['web', 'csrf']);
-Route::get('/tender/apply/{title}', [TenderController::class, 'apply'])->name('tender.apply')->withoutMiddleware(['web', 'csrf']);
 
 // Authentication routes without CSRF
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->withoutMiddleware(['web', 'csrf']);

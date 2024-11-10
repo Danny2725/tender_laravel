@@ -12,7 +12,6 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class TenderController extends Controller
 {
-    // Hiển thị form tạo tender
     public function create()
     {
         return view('tender.create', ['title' => 'Create Tender']);
@@ -21,39 +20,56 @@ class TenderController extends Controller
     public function store(Request $request)
     {
         try {
-
+            // Lấy người dùng hiện tại từ JWT token
             if (!$user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
             }
-        
         } catch (JWTException $e) {
             return response()->json(['status' => 'error', 'message' => 'Token is invalid or expired'], 401);
         }
-    
+
         $this->validateRequest($request);
-    
+
         $tender = TenderModel::create([
             'title' => $request->title,
             'description' => $request->description,
             'visibility' => $request->visibility,
             'creator_id' => $user->id,
         ]);
-    
+
         $this->handleInvites($tender, $request->suppliers);
-    
+
         Session::flash('success', 'Tender created successfully!');
         return response()->json(['status' => 'success', 'message' => 'Tender created successfully!']);
     }
 
-    public function listContractor()
+    public function listContractor(Request $request)
     {
-        $tenders = TenderModel::where('creator_id', Auth::id())->get();
+
+        $accessToken = $request->cookie('access_token');
+
+        try {
+            if (!$accessToken) {
+                return redirect()->route('login')->with('error', 'Access token is missing.');
+            }
+
+            $user = JWTAuth::setToken($accessToken)->authenticate();
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'User not found.');
+            }
+        } catch (JWTException $e) {
+            return redirect()->route('login')->with('error', 'Token is invalid or expired.');
+        }
+
+        $tenders = TenderModel::where('creator_id', $user->id)->get();
 
         return view('tender.list_contractor', [
             'title' => 'My Tenders (Contractor)',
             'tenders' => $tenders,
         ]);
     }
+
+
 
     // Hiển thị form chỉnh sửa tender
     public function edit($id)
@@ -91,21 +107,55 @@ class TenderController extends Controller
     }
 
     // Danh sách các tender khả dụng cho supplier
-    public function listSupplier()
+    public function listSupplier(Request $request)
     {
-        $tenders = TenderModel::where('visibility', 'public')
-            ->orWhereHas('invites', function ($query) {
-                $query->where('supplier_email', Auth::user()->email);
-            })
+        $accessToken = $request->cookie('access_token');
+
+        try {
+            if (!$accessToken) {
+                return redirect()->route('login')->with('error', 'Access token is missing.');
+            }
+
+            $user = JWTAuth::setToken($accessToken)->authenticate();
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'User not found.');
+            }
+        } catch (JWTException $e) {
+            return redirect()->route('login')->with('error', 'Token is invalid or expired.');
+        }
+
+        $userId = $user->id;
+        $userEmail = $user->email;
+
+        $tenderModel = new TenderModel();
+
+        $publicTenders = $tenderModel
+            ->where('visibility', 'public')
+            ->where('creator_id', '!=', $userId)
             ->get();
 
+        $inviteModel = new InviteModel();
+        $invites = $inviteModel->where('supplier_email', $userEmail)->get();
+
+        // Use pluck to get an array of tender_ids
+        $invitedTenderIds = $invites->pluck('tender_id')->toArray();
+
+        $privateTenders = [];
+        if (!empty($invitedTenderIds)) {
+            $privateTenders = $tenderModel
+                ->whereIn('id', $invitedTenderIds)
+                ->where('visibility', 'private')
+                ->get();
+        }
+
+        // dd($publicTenders,$privateTenders);
         return view('tender.list_supplier', [
             'title' => 'Available Tenders (Supplier)',
-            'tenders' => $tenders,
+            'publicTenders' => $publicTenders,
+            'privateTenders' => $privateTenders
         ]);
     }
 
-    // Xem chi tiết một tender
     public function detail($id)
     {
         $tender = TenderModel::findOrFail($id);
