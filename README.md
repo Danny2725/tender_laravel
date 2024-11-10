@@ -75,12 +75,9 @@ Laravel Overview
 Laravel is one of the most popular PHP frameworks, known for its modern structure, ease of use, and extensive built-in features, making it ideal for building complex web applications. Created by Taylor Otwell in 2011, Laravel provides an excellent solution for both small projects and large, scalable applications.
 
 Key Features of Laravel
-	1.	Eloquent ORM:
-Laravel includes a powerful ORM called Eloquent, which simplifies database interactions using PHP classes and an expressive syntax. It supports various relationships (e.g., one-to-many, many-to-many) and query building, making database interactions clean and readable.
-	2.	Blade Templating Engine:
-Blade is Laravel’s templating engine, allowing flexible layout management with features like template inheritance (@extends, @section, and @yield). Blade also provides directives like @if, @foreach, and more, making it easy to create clean, maintainable HTML views.
-	3.	Flexible Routing:
-Laravel offers robust routing, including RESTful routing and route groups. You can define routes with Route::get(), Route::post(), etc., making endpoint management organized and straightforward. Middleware support enables request filtering and additional security without duplicating code.
+1.	Eloquent ORM: Laravel includes a powerful ORM called Eloquent, which simplifies database interactions using PHP classes and an expressive syntax. It supports various relationships (e.g., one-to-many, many-to-many) and query building, making database interactions clean and readable.
+2.	Blade Templating Engine: Blade is Laravel’s templating engine, allowing flexible layout management with features like template inheritance (@extends, @section, and @yield). Blade also provides directives like @if, @foreach, and more, making it easy to create clean, maintainable HTML views.
+3.	Flexible Routing: Laravel offers robust routing, including RESTful routing and route groups. You can define routes with Route::get(), Route::post(), etc., making endpoint management organized and straightforward. Middleware support enables request filtering and additional security without duplicating code.
 	4.	Middleware:
 Middleware allows you to handle HTTP requests before they reach the controller, such as user authentication and CSRF protection. This keeps your controller code clean and adds security to your application.
 	5.	Artisan Command Line Interface (CLI):
