@@ -12,15 +12,16 @@
     </div>
 </div>
 
-<form action="{{ route('login') }}" method="post">
-    @csrf
+<div id="alertMessage" class="alert d-none" role="alert"></div>
+
+<form id="loginForm">
     <input type="hidden" id="role" name="role" value="contractor">
     
     <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
+        <label for="email" class="form-label">Email</label>
         <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-person"></i></span>
-            <input type="text" class="form-control" id="username" name="username" required placeholder="Enter your username">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
         </div>
     </div>
 
@@ -32,33 +33,52 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-            <label class="form-check-label" for="remember">Remember</label>
-        </div>
-        <a href="#" class="text-decoration-none">Forgot Password</a>
-    </div>
-
     <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
-
-    <div class="text-center">OR</div>
-
-    <a href="{{ route('register') }}" class="btn btn-outline-primary w-100 mt-3">Register To Create Account</a>
 </form>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // JavaScript for role selection
-    document.getElementById('contractor-role').addEventListener('click', function() {
-        document.getElementById('supplier-role').classList.remove('active');
-        this.classList.add('active');
-        document.getElementById('role').value = 'contractor';
-    });
+    $(document).ready(function() {
+        $('#contractor-role').on('click', function() {
+            $('#supplier-role').removeClass('active');
+            $(this).addClass('active');
+            $('#role').val('contractor');
+        });
 
-    document.getElementById('supplier-role').addEventListener('click', function() {
-        document.getElementById('contractor-role').classList.remove('active');
-        this.classList.add('active');
-        document.getElementById('role').value = 'supplier';
+        $('#supplier-role').on('click', function() {
+            $('#contractor-role').removeClass('active');
+            $(this).addClass('active');
+            $('#role').val('supplier');
+        });
+
+        $('#loginForm').on('submit', function(event) {
+            event.preventDefault();
+            $('#alertMessage').addClass('d-none').removeClass('alert-success alert-danger');
+
+            const formData = {
+                email: $('#email').val(),
+                password: $('#password').val(),
+            };
+
+            $.ajax({
+                url: '{{ route("login") }}',
+                type: 'POST',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                success: function(response) {
+                    // Lưu access_token vào cookie
+                    document.cookie = `access_token=${response.access_token}; path=/; max-age=3600; secure; samesite=strict`;
+
+                    let redirectUrl = response.user.role === 'contractor' ? '/tender/list_contractor' : '/tender/list_supplier';
+                    $('#alertMessage').removeClass('d-none alert-danger').addClass('alert-success').text('Login successful!');
+                    setTimeout(() => window.location.href = redirectUrl, 1500);
+                },
+                error: function(error) {
+                    const errorMessage = error.responseJSON ? error.responseJSON.message : 'Login failed. Please try again.';
+                    $('#alertMessage').removeClass('d-none alert-success').addClass('alert-danger').text(errorMessage);
+                }
+            });
+        });
     });
 </script>
 @endsection
