@@ -90,3 +90,30 @@ Why Choose Laravel for Your Project
 2.	Ecosystem and Community: Laravel has a large community and ecosystem with tools like Laravel Nova (for backend management), Laravel Vapor (for serverless deployment), and numerous third-party packages. The strong community provides ample resources, tutorials, and solutions to common challenges.
 3.	Ease of Maintenance: Laravel’s MVC structure and coding standards (following PSR and SOLID principles) make it easy to maintain and upgrade. Clean, well-organized code leads to improved readability and longevity, making future updates more manageable.
 4.	Strong Security: Laravel includes built-in security features like CSRF protection, password hashing (using bcrypt and Argon2), and protection against SQL injection and XSS attacks. Authentication and authorization features allow you to secure endpoints effectively, enhancing the overall security of your application.
+
+
+
+
+## Comparison: CodeIgniter vs Laravel
+
+| Feature               | CodeIgniter                          | Laravel                                      |
+|-----------------------|--------------------------------------|----------------------------------------------|
+| **Complexity**        | Simple, easy to learn                | More complex, with many built-in features    |
+| **Performance**       | Fast, lightweight, few dependencies  | Slightly heavier but ideal for larger apps   |
+| **Routing**           | Basic                                | Advanced, supports RESTful and middleware    |
+| **ORM**               | Basic Active Record                  | Powerful Eloquent ORM                        |
+| **Built-In Features** | Requires additional setup for extras | Includes authentication, authorization, caching |
+| **Testing**           | Limited testing support              | Comprehensive testing tools                  |
+| **Community**         | Smaller, fewer resources available   | Large, active community, extensive resources |
+
+## When to Choose CodeIgniter vs Laravel
+
+- **Choose CodeIgniter** if:
+  - You need a fast, lightweight application with simple requirements.
+  - You’re a beginner wanting a quick way to learn PHP development.
+  - Performance and minimal setup are your top priorities.
+
+- **Choose Laravel** if:
+  - You’re building a feature-rich, complex application.
+  - You need built-in features like authentication, authorization, and RESTful API support.
+  - You’re planning for a scalable, maintainable system that might grow in the future.
